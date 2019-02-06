@@ -1,0 +1,13 @@
+@import "variables";
+body {
+  font-size: $system_font_size;
+  font-family: $system_font_family;
+}
+h1, h2, h3, h4, h5 {
+  font-weight: 400;
+}
+
+input, textarea, select, button {
+  font-family: $system_font_family;
+}
+

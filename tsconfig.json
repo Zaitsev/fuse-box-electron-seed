@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "newLine": "LF",
+    "target": "esnext",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+
+    },
+    "skipLibCheck":true,
+    "downlevelIteration":false,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "sourceMap": true
+
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "types": [
+    "src/typings"
+  ]
+
+}

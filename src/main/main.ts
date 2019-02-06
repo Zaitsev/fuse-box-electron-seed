@@ -1,3 +1,5 @@
+import {format}          from "url";
+
 const env = process.env.NODE_ENV || 'production';
 const dev = env === 'development';
 
@@ -5,8 +7,9 @@ const path = require('path');
 const url = require('url');
 const isDevElectron = require('electron-is-dev'); // is dev electron (run from builded version)
 const electron = require('electron'); // Module to control application life.
-import * as logger from './logger';
+import * as logger       from './logger';
 import * as windowBounds from './windowBounds';
+import {join}            from "path";
 // const autoUpdater = require('./autoUpdater') // comming soon
 
 const app = electron.app; // Module to create native browser window.
@@ -30,8 +33,8 @@ function createWindow() {
   logger.init(mainWindow);
   windowBounds.init(mainWindow);
 
-  if(dev) {
-    mainWindow.loadURL('http://localhost:4444');
+  if(false && dev) {
+    mainWindow.loadURL('http://localhost:4444/renderer');
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
