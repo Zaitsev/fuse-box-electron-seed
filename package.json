@@ -11,10 +11,11 @@
   "main": "dist/main/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "node fuse clean",
     "start": "node fuse",
     "start:electron": "electron .",
     "start:electron:watch": "nodemon --watch 'dist/main/*.*' --exec yarn run start:electron",
-    "build": "yarn run lint && cross-env NODE_ENV=production && node fuse dist",
+    "build": "cross-env NODE_ENV=production && node fuse dist",
     "lint": "tslint --project tslint.json",
     "prod": "cross-env NODE_ENV=production && yarn run build && yarn run start:electron",
     "packager": "yarn run build && node ./package.js",
@@ -83,13 +84,13 @@
     "electron": "^4.0.4",
     "electron-builder": "^20.19.1",
     "express": "^4.15.4",
-    "fuse-box": "^4.0.0-next.2",
+    "fuse-box": "^4.0.0-next.4",
     "node-sass": "^4.5.3",
     "nodemon": "^1.17.5",
     "postcss-modules": "^1.4.1",
+    "terser": "^3.16.1",
     "tslint": "^5.7.0",
-    "typescript": "^3.3.1",
-    "uglify-js": "^3.0.27"
+    "typescript": "^3.3.1"
   },
   "dependencies": {
     "electron-is-dev": "^1.0.1",

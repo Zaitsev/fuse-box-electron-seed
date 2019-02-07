@@ -1716,10 +1716,10 @@ fstream@^1.0.0, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-fuse-box@^4.0.0-next.2:
-  version "4.0.0-next.3"
-  resolved "https://registry.yarnpkg.com/fuse-box/-/fuse-box-4.0.0-next.3.tgz#9abdadb55313a9cedd00a7e8f24c9bea1aef7a9e"
-  integrity sha512-7aN8kG2TE1NVuv6iXjXBW6ZN4EikT4rc5vLsQcesfvPm4QW/R4VOX/TPCar7kkuDTMF3oPxgX5YsDlikE8/RzA==
+fuse-box@^4.0.0-next.4:
+  version "4.0.0-next.4"
+  resolved "https://registry.yarnpkg.com/fuse-box/-/fuse-box-4.0.0-next.4.tgz#6976cbd0d0c65b33ea57ead4b7f1150b93ea0751"
+  integrity sha512-fd1u105m6QoL1iFT4QN7zuCAwBm/iRTe/K2/7DeFPOU/EU5A63Vg41H6XySCWWmtNNKoBUd/NeA/nfmKbw1O4Q==
   dependencies:
     acorn "^5.7.3"
     acorn-jsx "^4.0.1"
@@ -4163,7 +4163,7 @@ source-map-resolve@^0.5.0:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
-source-map-support@^0.5.10, source-map-support@^0.5.9:
+source-map-support@^0.5.10, source-map-support@^0.5.9, source-map-support@~0.5.9:
   version "0.5.10"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.10.tgz#2214080bc9d51832511ee2bab96e3c2f9353120c"
   integrity sha512-YfQ3tQFTK/yzlGJuX8pTwa4tifQj4QS2Mj7UegOu8jAz59MqIiMGPXxQhVQiIMNzayuUSF/jEuVnfFF5JqybmQ==
@@ -4449,6 +4449,15 @@ term-size@^1.2.0:
   dependencies:
     execa "^0.7.0"
 
+terser@^3.16.1:
+  version "3.16.1"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-3.16.1.tgz#5b0dd4fa1ffd0b0b43c2493b2c364fd179160493"
+  integrity sha512-JDJjgleBROeek2iBcSNzOHLKsB/MdDf+E/BOAJ0Tk9r7p9/fVobfv7LMJ/g/k3v9SXdmjZnIlFd5nfn/Rt0Xow==
+  dependencies:
+    commander "~2.17.1"
+    source-map "~0.6.1"
+    source-map-support "~0.5.9"
+
 throttleit@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/throttleit/-/throttleit-0.0.2.tgz#cfedf88e60c00dd9697b61fdd2a8343a9b680eaf"
@@ -4633,14 +4642,6 @@ typescript@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.1.tgz#6de14e1db4b8a006ac535e482c8ba018c55f750b"
   integrity sha512-cTmIDFW7O0IHbn1DPYjkiebHxwtCMU+eTy30ZtJNBPF9j2O1ITu5XH2YnBeVRKWHqF+3JQwWJv0Q0aUgX8W7IA==
-
-uglify-js@^3.0.27:
-  version "3.4.9"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.9.tgz#af02f180c1207d76432e473ed24a28f4a782bae3"
-  integrity sha512-8CJsbKOtEbnJsTyv6LE6m6ZKniqMiFWmm9sRbopbkGs3gMPPfd3Fh8iIA4Ykv5MgaTbqHr4BaoGLJLZNhsrW1Q==
-  dependencies:
-    commander "~2.17.1"
-    source-map "~0.6.1"
 
 ultron@1.0.x:
   version "1.0.2"
