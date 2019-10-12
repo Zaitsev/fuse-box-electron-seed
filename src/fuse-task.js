@@ -1,3 +1,7 @@
+const path=require('path');
+const fs=require('fs');
+const { spawn } = require("child_process");
+
 const {
   FuseBox,
   SassPlugin,
@@ -9,18 +13,11 @@ const {
   CSSModulesPlugin,
   EnvPlugin,
   TerserPlugin,
-  JSONPlugin
+  SourceMapPlainJsPlugin,
 } = require("fuse-box");
-
-const express = require("express");
-const path = require("path");
-const { spawn } = require("child_process");
-
-let production = false;
-OUTPUT_DIR = 'dist';
-let DEV_PORT = 5444;
-Sparky.task("build:renderer", () => {
-
+const  homeDir= path.join(__dirname);
+function buildRenderer(OUTPUT_DIR,production=false,DEV_PORT=4444){
+  console.log('Build rendered-------------------------');
   const globalStyles =
     [
       /node_modules.*(\.css|scss)$/,
@@ -38,11 +35,11 @@ Sparky.task("build:renderer", () => {
   ;
 
   const fuse = FuseBox.init({
-    homeDir: "src",
+    homeDir,
     output: "dist/renderer/$name.js",
-    hash: production,
-    target: "electron",
-    ignoreModules: ["electron"],
+    hash: false,
+    target: "electron@esnext",
+    ignoreModules: ["electron", "events","debug"],
     cache: !production,
     // useJsNext: true,
     natives: {
@@ -51,82 +48,103 @@ Sparky.task("build:renderer", () => {
       http: false,
       stream: false,
     },
-    sourceMaps: { project: true, vendor: false },
+    sourceMaps: { project: true, vendor: true },
     plugins: [
 
-      EnvPlugin({ NODE_ENV: production ? "production" : "development" }),
+      EnvPlugin({ NODE_ENV: production ? "production" : "development", DEBUG: '*' }),
+      SourceMapPlainJsPlugin(),
       globalStyles,
       [SassPlugin(), CSSModulesPlugin(), CSSPlugin()],
-      // globalStyles,
+      // Babel7Plugin({
+      //   config: {
+      //     sourceMaps: true,
+      //     presets: [
+      //       ["@babel/react",{
+      //         // pragma:'dom',
+      //         development:true,
+      //         useBuiltIns:false,
+      //       }]
+      //     ],
+      //   },
+      // }),
       WebIndexPlugin({
         title: "FuseBox electron demo",
-        template: "src/renderer/index.html",
+        template: path.join(homeDir,"renderer/index.html"),
         path: "."
       }),
       production && QuantumPlugin({
         bakeApiIntoBundle: 'vendor',
         target: 'electron',
         treeshake: true,
+        sourceMaps: { vendor: false },
+        replaceProcessEnv:true,
         removeExportsInterop: false,
-        // replaceTypeOf       : false,
-        // terser: {sourceMap :true}
+        replaceTypeOf: false,
+        uglify: false,
       }),
-      // TerserPlugin({
-      //   sourceMap: true, compress: false, mangle: {
+      // production && TerserPlugin({
+      //   sourceMap: true, compress: true, mangle: {
       //     toplevel: true,
       //   },
       // }),
 
     ]
   });
-
   if (!production) {
     // Configure development server
-    // fuse.dev({ port: DEV_PORT++, httpServer: false });
-    fuse.dev({ root: false }, server => {
-      const dist = path.join(__dirname, "dist");
-      const app = server.httpServer.app;
-      app.use("/renderer/", express.static(path.join(dist, 'renderer')));
-      app.get("*", function (req, res) {
-        res.sendFile(path.join(dist, "renderer/index.html"));
-      });
-    })
+    fuse.dev({ port: DEV_PORT++, httpServer: false });
   }
-  const vendor = fuse.bundle("vendor")
+  fuse.bundle("vendor")
     .instructions('~ renderer/index.tsx + fuse-box-css');
   const app = fuse.bundle("renderer")
-    .instructions('!> [renderer/index.tsx ]');
-  // const app = fuse.bundle("renderer")
-  //   .instructions('> renderer/index.tsx + fuse-box-css');
+    .instructions('!> [renderer/index.tsx]');
+
 
   if (!production) {
     app.hmr().watch()
   }
 
   return fuse.run()
-});
-
-Sparky.task("build:main", () => {
+}
+function buildMain(OUTPUT_DIR,plugins=[],production=false,upgradetools=false){
   const fuse = FuseBox.init({
-    homeDir: "src",
+    homeDir,
+    ignoreModules: ["electron", ],
+
     output: "dist/main/$name.js",
     target: "server",
     cache: !production,
+    sourceMaps: { project: true, vendor: true },
+    natives: {
+      process: true,
+    },
     plugins: [
-      EnvPlugin({ NODE_ENV: production ? "production" : "development" }),
+      EnvPlugin({
+        NODE_ENV: production ? "production" : "development",
+        UPGRADE_EXTENSIONS: upgradetools,
+      }),
       production && QuantumPlugin({
+        // api: core => {
+        //   core.solveComputed("default/shared/hooks/main.js");
+        // },
         bakeApiIntoBundle: 'main',
+        sourceMaps: { vendor: false },
         target: 'server',
+        replaceProcessEnv:true,
         treeshake: true,
         removeExportsInterop: false,
         uglify: false
       })
     ]
   });
+  console.log("=======================");
+  console.log(` > main/main.ts  `+plugins.join(' + '));
+  console.log("=======================");
 
   const app = fuse.bundle("main")
-    .instructions('> [main/main.ts]');
-
+    .instructions(` > main/main.ts   `);
+  createMainPluginList(OUTPUT_DIR,plugins);
+  let cb=null;
   if (!production) {
     app.watch();
 
@@ -147,22 +165,12 @@ Sparky.task("build:main", () => {
       }
     });
   }
-
-  return fuse.run()
-});
-
-
-// main task
-Sparky.task("default", ["clean:dist", "clean:cache", "build:renderer", "build:main"], () => {
-});
-
-// wipe it all
-Sparky.task("clean", ["clean:dist", "clean:cache"]);
-Sparky.task("clean:dist", () => Sparky.src("dist/*").clean("dist/"));
-// wipe it all from .fusebox - cache dir
-Sparky.task("clean:cache", () => Sparky.src(".fusebox/*").clean(".fusebox/"));
-
-// prod build
-Sparky.task("set-production-env", () => production = true);
-Sparky.task("dist", ["clean:dist", "clean:cache", "set-production-env", "build:main", "build:renderer"], () => {
-});
+  return fuse.run();
+  // return fuse.run()
+}
+function createMainPluginList(OUTPUT_DIR,plugins=[]){
+  console.log("-------------------------------",plugins);
+ const json = JSON.stringify(plugins);
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'main/main-plugins.json'), json, 'utf8');
+}
+module.exports={buildRenderer,buildMain};

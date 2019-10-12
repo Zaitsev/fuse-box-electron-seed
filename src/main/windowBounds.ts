@@ -1,9 +1,9 @@
 const settings = require('electron-settings');
 
-let ti;
-let win;
+let ti:any;
+let win:any;
 
-export function init (mainWin) {
+export function init (mainWin:any) {
   win = mainWin;
 
   win.on('resize', saveWindowBounds);
